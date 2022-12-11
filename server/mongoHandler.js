@@ -78,7 +78,7 @@ const mongoHandler = {
       res.status(500).send('Ошибка')
     }
   },
-  insertPost: async (title, description = null, image = null, token, res) => {
+  insertPost: async (title, description, image, token, res) => {
     try {
       await client.connect()
       const collections = await client.db('Forum').collection('Posts')
