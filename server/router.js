@@ -19,6 +19,7 @@ router.post('/posts', async (req, res) => {
     req.body.title,
     req.body.description ? req.body.description : null,
     req.body.image ? req.body.image : null,
+    req.get('Token'),
     res
   )
 })
