@@ -27,6 +27,12 @@ router.post('/comments', async (req, res) => {
   await mongoHandler.insertComment(req.body.text, req.body.post, req.get('Token'), res)
 })
 
+router.get('/posts', async (_, res) => {
+  await mongoHandler.findAll('Posts', res)
+})
 
+router.get('/comments', async (_, res) => {
+  await mongoHandler.findAll('Comments', res)
+})
 
 module.exports = router

@@ -28,9 +28,10 @@ const mongoHandler = {
         await collection.insertOne({username: username, password: securePassword, _id: new ObjectId()}).then()
         res.status(201).send('Успешно')
       }
-      await client.close()
     } catch (e) {
       res.status(500).send('Ошибка')
+    } finally {
+      await client.close()
     }
   },
   login: async (username, password, res) => {
@@ -60,9 +61,10 @@ const mongoHandler = {
       } else {
         res.status(404).send('Пользователь не найден')
       }
-      await client.close()
     } catch (e) {
       res.status(500).send('Ошибка')
+    } finally {
+      await client.close()
     }
   },
   logout: async (token, res) => {
@@ -76,6 +78,8 @@ const mongoHandler = {
       res.status(userInfo.status).send(userInfo.text)
     } catch (e) {
       res.status(500).send('Ошибка')
+    } finally {
+      await client.close()
     }
   },
   insertPost: async (title, description, image, token, res) => {
@@ -94,13 +98,16 @@ const mongoHandler = {
             description: !description && image ? 'Без описания' : description,
             title: title,
             comments: [],
-            _id: new ObjectId()
+            _id: new ObjectId(),
+            datetime: new Date().toLocaleString()
           })
         }
         res.status(userInfo.status).send(userInfo.text)
       }
     } catch (e) {
       res.status(500).send('Ошибка')
+    } finally {
+      await client.close()
     }
   },
   insertComment: async (text, post, token, res) => {
@@ -109,14 +116,31 @@ const mongoHandler = {
       const collection = await client.db('Forum').collection('Comments')
       const userInfo = await mongoHandler.userTests(token)
       if (userInfo.success) {
-        await collection.insertOne({text: text, post: post, _id: new ObjectId()})
+        await collection.insertOne({text: text, post: post, _id: new ObjectId(), datetime: new Date().toLocaleString()})
       }
       res.status(userInfo.status).send(userInfo.text)
     } catch (e) {
       res.status(500).send('Ошибка')
+    } finally {
+      await client.close()
     }
   },
-
+  findAll: async (findElement, res) => {
+    try {
+      await client.connect()
+      const collection = await client.db('Forum').collection(findElement)
+      const arr = await collection.find().toArray()
+      const sortedArr = arr
+        .map(n => [ n, +new Date(n.datetime.replace(/(\d+)\.(\d+)\.(\d+),/, '$3-$2-$1')) ])
+        .sort((a, b) => a[1] - b[1])
+        .map(n => n[0]);
+      res.status(200).send(sortedArr)
+    } catch (e) {
+      res.status(500).send('Ошибка')
+    } finally {
+      await client.close()
+    }
+  }
 }
 
 module.exports = mongoHandler
