@@ -1,22 +1,22 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/dist/query/react'
-import {IProfile} from "../models/IProfile";
-import {ILoginResponse} from "../models/ILoginResponse";
-import {IPost} from "../models/IPost";
-import {IComment} from "../models/IComment";
+import {IProfileRequest} from "../models/IProfileRequest";
+import {IProfileResponse} from "../models/IProfileResponse";
+import {IPosts} from "../models/IPosts";
+import {IComments} from "../models/IComments";
 
 export const forumAPI = createApi({
   reducerPath: 'forumAPI',
   baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:8000' }),
   tagTypes: ['Get'],
   endpoints: (build) => ({
-    registration: build.mutation<string, IProfile>({
+    registration: build.mutation<string, IProfileRequest>({
       query: args => ({
         url: '/users',
         method: 'POST',
         body: args
       })
     }),
-    login: build.mutation<ILoginResponse, IProfile>({
+    login: build.mutation<IProfileResponse, IProfileRequest>({
       query: args => ({
         url: '/users/sessions',
         method: 'POST',
@@ -34,7 +34,7 @@ export const forumAPI = createApi({
       }),
       invalidatesTags: ['Get']
     }),
-    postPost: build.mutation<string, IPost>({
+    postPost: build.mutation<string, IPosts>({
       query: args => ({
         url: '/posts',
         method: 'POST',
@@ -49,12 +49,12 @@ export const forumAPI = createApi({
       }),
       invalidatesTags: ['Get']
     }),
-    postComment: build.mutation<string, IComment>({
+    postComment: build.mutation<string, IComments>({
       query: args => ({
         url: '/comments',
         method: 'POST',
         headers: {
-          Token: args.token
+          Token: args.token,
         },
         body: {
           text: args.text,
@@ -62,6 +62,20 @@ export const forumAPI = createApi({
         }
       }),
       invalidatesTags: ['Get']
+    }),
+    findPosts: build.query<IPosts, undefined>({
+      query: arg => ({
+        url: '/posts',
+        method: 'GET'
+      }),
+      providesTags: result => ['Get']
+    }),
+    findComments: build.query<IComments, undefined>({
+      query: arg => ({
+        url: '/comments',
+        method: 'GET'
+      }),
+      providesTags: result => ['Get']
     })
   })
 })
