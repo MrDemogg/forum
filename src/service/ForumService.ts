@@ -63,14 +63,14 @@ export const forumAPI = createApi({
       }),
       invalidatesTags: ['Get']
     }),
-    findPosts: build.query<IPosts, undefined>({
+    findPosts: build.query<IPosts[], undefined>({
       query: arg => ({
         url: '/posts',
         method: 'GET'
       }),
       providesTags: result => ['Get']
     }),
-    findComments: build.query<IComments, undefined>({
+    findComments: build.query<IComments[], undefined>({
       query: arg => ({
         url: '/comments',
         method: 'GET'
