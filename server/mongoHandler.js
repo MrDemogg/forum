@@ -17,16 +17,20 @@ const mongoHandler = {
     try {
       await client.connect()
       const collection = await client.db('Forum').collection('Users')
-      const profile = await collection.findOne({username: username})
-      if (profile && 'username' in profile && username === profile.username) {
-        res.status(403).send('Пользователь с таким username уже существует')
+      if (username && password) {
+        const profile = await collection.findOne({username: username})
+        if (profile && 'username' in profile && username === profile.username) {
+          res.status(403).send('Пользователь с таким username уже существует')
+        } else {
+          let securePassword
+          await bcrypt.hash(password, 5).then(function(hash) {
+            securePassword = hash
+          });
+          await collection.insertOne({username: username, password: securePassword, _id: new ObjectId()}).then()
+          res.status(201).send('Успешно')
+        }
       } else {
-        let securePassword
-        await bcrypt.hash(password, 5).then(function(hash) {
-          securePassword = hash
-        });
-        await collection.insertOne({username: username, password: securePassword, _id: new ObjectId()}).then()
-        res.status(201).send('Успешно')
+        res.status(412).send('Поле username или password не были заполнены')
       }
     } catch (e) {
       res.status(500).send('Ошибка')
@@ -97,7 +101,6 @@ const mongoHandler = {
             image: !image && description ? 'https://cdn-icons-png.flaticon.com/512/2639/2639965.png' : image,
             description: !description && image ? 'Без описания' : description,
             title: title,
-            comments: [],
             _id: new ObjectId(),
             datetime: new Date().toLocaleString()
           })
