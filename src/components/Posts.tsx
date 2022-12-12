@@ -8,17 +8,22 @@ const Posts = () => {
   useEffect(() => {
     setInterval(() => {
       refetch()
-    }, 60000)
+    }, 200000)
   }, [])
   return (
-    <div>
+    <div style={{marginTop: 55}}>
       {isLoading
         ? <Box sx={{ width: '100%' }}>
-            <LinearProgress />
-          </Box>
+          <LinearProgress />
+        </Box>
         : isError
           ? <Alert variant="filled" severity="error">
-              This is an error alert — check it out!
+              {error
+                ? 'data' in error && 'originalStatus' in error && error.originalStatus !== 200 && error.data
+                : 'status' in error && error['status'] === 'FETCH_ERROR' && 'error' in error
+                  ? error['error']
+                  : 'message' in error && error['message']
+              }
             </Alert>
           : posts && posts.length > 0
             ? posts.map(post =>
