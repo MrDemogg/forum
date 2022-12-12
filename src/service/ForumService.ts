@@ -13,14 +13,16 @@ export const forumAPI = createApi({
       query: args => ({
         url: '/users',
         method: 'POST',
-        body: args
+        body: args,
+        responseHandler: response => response.text()
       })
     }),
     login: build.mutation<IProfileResponse, IProfileRequest>({
       query: args => ({
         url: '/users/sessions',
         method: 'POST',
-        body: args
+        body: args,
+        responseHandler: response => response.text()
       }),
       invalidatesTags: ['Get']
     }),
@@ -30,7 +32,8 @@ export const forumAPI = createApi({
         method: 'PATCH',
         headers: {
           Token: arg
-        }
+        },
+        responseHandler: response => response.text()
       }),
       invalidatesTags: ['Get']
     }),
@@ -45,7 +48,8 @@ export const forumAPI = createApi({
           title: args.title,
           description: args.description ? args.description : undefined,
           image: args.image ? args.image : undefined
-        }
+        },
+        responseHandler: response => response.text()
       }),
       invalidatesTags: ['Get']
     }),
@@ -59,19 +63,20 @@ export const forumAPI = createApi({
         body: {
           text: args.text,
           post: args.post
-        }
+        },
+        responseHandler: response => response.text()
       }),
       invalidatesTags: ['Get']
     }),
     findPosts: build.query<IPosts[], undefined>({
-      query: arg => ({
+      query: () => ({
         url: '/posts',
         method: 'GET'
       }),
       providesTags: result => ['Get']
     }),
     findComments: build.query<IComments[], undefined>({
-      query: arg => ({
+      query: () => ({
         url: '/comments',
         method: 'GET'
       }),
