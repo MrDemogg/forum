@@ -15,8 +15,8 @@ const App = () => {
     if (userData) {
       const parsedData = JSON.parse(userData)
       if ('token' in parsedData && 'id' in parsedData && typeof parsedData.token === 'string' && typeof parsedData.id === "string") {
-        dispatch(forumSlice.actions.setToken(parsedData.token))
         dispatch(forumSlice.actions.setId(parsedData.id))
+        dispatch(forumSlice.actions.setToken(parsedData.token))
       }
     }
   }, [])
