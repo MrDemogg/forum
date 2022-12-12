@@ -1,15 +1,31 @@
-import { createSlice } from '@reduxjs/toolkit'
+import {createSlice, PayloadAction} from '@reduxjs/toolkit'
 
-const initialState = {
-
+interface ForumState {
+  error: string | null,
+  token: string | null,
+  userId: string | null
 }
 
-export const socialSlice = createSlice({
+const initialState: ForumState = {
+  error: null,
+  token: null,
+  userId: null
+}
+
+export const forumSlice = createSlice({
   name: 'forum',
   initialState,
   reducers: {
-
+    setError(state, actions: PayloadAction<string | null>) {
+      state.error = actions.payload
+    },
+    setToken(state, actions: PayloadAction<string | null>) {
+      state.token = actions.payload
+    },
+    setId(state, actions: PayloadAction<string | null>) {
+      state.userId = actions.payload
+    }
   }
 })
 
-export default socialSlice.reducer
+export default forumSlice.reducer
