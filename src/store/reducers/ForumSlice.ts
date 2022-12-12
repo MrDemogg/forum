@@ -1,15 +1,17 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit'
 
 interface ForumState {
-  error: string | null,
+  errorInfo: string | null,
   token: string | null,
-  userId: string | null
+  userId: string | null,
+  globalIsError: boolean
 }
 
 const initialState: ForumState = {
-  error: null,
+  errorInfo: null,
   token: null,
-  userId: null
+  userId: null,
+  globalIsError: false
 }
 
 export const forumSlice = createSlice({
@@ -17,13 +19,16 @@ export const forumSlice = createSlice({
   initialState,
   reducers: {
     setError(state, actions: PayloadAction<string | null>) {
-      state.error = actions.payload
+      state.errorInfo = actions.payload
     },
     setToken(state, actions: PayloadAction<string | null>) {
       state.token = actions.payload
     },
     setId(state, actions: PayloadAction<string | null>) {
       state.userId = actions.payload
+    },
+    changeGlobalIsError(state, action: PayloadAction<boolean>) {
+      state.globalIsError = action.payload
     }
   }
 })
