@@ -42,28 +42,32 @@ const mongoHandler = {
     try {
       await client.connect()
       const collection = await client.db('Forum').collection('Users')
-      let token = v4()
-      while (token === await collection.findOne({token: token})) {
-        token = v4()
-      }
-      let profile = await collection.findOne({username: username})
-      let isPasswordCorrect = false
-      if (profile !== null) {
-        await bcrypt.compare(password, profile.password).then(function (result) {
-          isPasswordCorrect = result
-        })
-        if (isPasswordCorrect) {
-          await collection.updateOne(
-            {username: username, password: profile.password},
-            {$set: {token: token}}).then(() => {
-              res.status(201).send({token: token, id: profile._id})
-            }
-          )
+      if (username && password) {
+        let token = v4()
+        while (token === await collection.findOne({token: token})) {
+          token = v4()
+        }
+        let profile = await collection.findOne({username: username})
+        let isPasswordCorrect = false
+        if (profile !== null) {
+          await bcrypt.compare(password, profile.password).then(function (result) {
+            isPasswordCorrect = result
+          })
+          if (isPasswordCorrect) {
+            await collection.updateOne(
+              {username: username, password: profile.password},
+              {$set: {token: token}}).then(() => {
+                res.status(201).send({token: token, id: profile._id})
+              }
+            )
+          } else {
+            res.status(418).send('Неправильный пароль пупсик')
+          }
         } else {
-          res.status(418).send('Неправильный пароль пупсик')
+          res.status(404).send('Пользователь не найден')
         }
       } else {
-        res.status(404).send('Пользователь не найден')
+        res.status(412).send('Поле username или password не были заполнены')
       }
     } catch (e) {
       res.status(500).send('Ошибка')
