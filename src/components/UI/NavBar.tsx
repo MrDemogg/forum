@@ -8,7 +8,7 @@ import {useAppSelector} from "../../hooks/redux";
 const NavBar = () => {
   const router = useNavigate()
   const [modalVisible, setModalVisible] = useState(false)
-  const {token} = useAppSelector(state => state.forumReducer)
+  const {token, userId} = useAppSelector(state => state.forumReducer)
 
   return (
     <div>
@@ -18,7 +18,7 @@ const NavBar = () => {
           <Nav>
             <Nav.Link onClick={() => router('/post')}>Posts</Nav.Link>
           </Nav>
-          {token
+          {token && userId
             ? <div style={{display: 'flex', flexDirection: 'row'}}>
                 <Button variant={'outlined'} color={'warning'} style={{marginRight: 20}}>Post new Post</Button>
                 <Button variant={'outlined'} color={'error'}>Logout</Button>
