@@ -1,4 +1,4 @@
 export interface IProfileRequest {
-  name: string,
+  username: string,
   password: string
 }
