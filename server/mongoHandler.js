@@ -5,13 +5,13 @@ const {v4} = require('uuid')
 const client = new MongoClient('mongodb://localhost:27017')
 
 const mongoHandler = {
-  userTests: async (token) => {
+  userTests: async (token, userId) => {
     const users = await client.db('Forum').collection('Users')
-    const isUserLogged = await users.findOne({token: token})
+    const isUserLogged = await users.findOne({token: token, _id: new ObjectId(userId)})
     if (isUserLogged !== null) {
       return {success: true, status: 200, text: 'Успешно'}
     }
-    return {success: false, status: 403, text: 'Пользователь не авторизован'}
+    return {success: false, status: 403, text: 'Пользователь не авторизован или пользователя не существует'}
   },
   register: async (username, password, res) => {
     try {
@@ -75,10 +75,10 @@ const mongoHandler = {
       await client.close()
     }
   },
-  logout: async (token, res) => {
+  logout: async (userId, token, res) => {
     try {
       await client.connect()
-      const userInfo = await mongoHandler.userTests(token)
+      const userInfo = await mongoHandler.userTests(token, userId)
       if (userInfo.success) {
         const collection = await client.db('Forum').collection('Users')
         await collection.updateOne({token: token}, {$unset: {token: ''}})
@@ -90,22 +90,25 @@ const mongoHandler = {
       await client.close()
     }
   },
-  insertPost: async (title, description, image, token, res) => {
+  insertPost: async (title, description, image, userId, token, res) => {
     try {
       await client.connect()
       const collections = await client.db('Forum').collection('Posts')
+      const users = await client.db('Forum').collection('Users')
       if (!title) {
         res.status(400).send('Тема не должна быть пуста')
       } else if (!image && !description) {
         res.status(400).send('Одно из двух (Image или Description) не должно быть пустым')
       } else {
-        const userInfo = await mongoHandler.userTests(token)
+        const userInfo = await mongoHandler.userTests(token, userId)
+        const userName = await users.findOne({_id: userId})
         if (userInfo.success) {
           await collections.insertOne({
             image: !image && description ? 'https://cdn-icons-png.flaticon.com/512/2639/2639965.png' : image,
             description: !description && image ? 'Без описания' : description,
             title: title,
             _id: new ObjectId(),
+            username: userName,
             datetime: new Date().toLocaleString()
           })
         }
@@ -117,13 +120,15 @@ const mongoHandler = {
       await client.close()
     }
   },
-  insertComment: async (text, post, token, res) => {
+  insertComment: async (text, post, userId, token, res) => {
     try {
       await client.connect()
       const collection = await client.db('Forum').collection('Comments')
       const userInfo = await mongoHandler.userTests(token)
+      const users = await client.db('Forum').collection('Users')
+      const userName = users.findOne({_id: userId})
       if (userInfo.success) {
-        await collection.insertOne({text: text, post: post, _id: new ObjectId(), datetime: new Date().toLocaleString()})
+        await collection.insertOne({text: text, post: post, _id: new ObjectId(), username: userName, datetime: new Date().toLocaleString()})
       }
       res.status(userInfo.status).send(userInfo.text)
     } catch (e) {
