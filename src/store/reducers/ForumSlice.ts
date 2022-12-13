@@ -4,14 +4,16 @@ interface ForumState {
   errorInfo: string | null,
   token: string | null,
   userId: string | null,
-  globalIsError: boolean
+  globalIsError: boolean,
+  globalIsLoading: boolean
 }
 
 const initialState: ForumState = {
   errorInfo: null,
   token: null,
   userId: null,
-  globalIsError: false
+  globalIsError: false,
+  globalIsLoading: false
 }
 
 export const forumSlice = createSlice({
@@ -29,6 +31,9 @@ export const forumSlice = createSlice({
     },
     changeGlobalIsError(state, action: PayloadAction<boolean>) {
       state.globalIsError = action.payload
+    },
+    changeGlobalIsLoading(state, action: PayloadAction<boolean>) {
+      state.globalIsLoading = action.payload
     }
   }
 })
