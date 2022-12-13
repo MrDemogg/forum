@@ -12,10 +12,10 @@ import {forumSlice} from "../store/reducers/ForumSlice";
 
 const Posts = () => {
   const {data: posts, error, isLoading, isError, refetch} = forumAPI.useFindPostsQuery(undefined)
-  const {globalIsLoading} = useAppSelector(state => state.forumReducer)
+  const {globalIsLoading, globalIsError} = useAppSelector(state => state.forumReducer)
   const dispatch = useAppDispatch()
   useEffect(() => {
-    if (!isError) {
+    if (!globalIsError && !globalIsLoading) {
       setInterval(() => {
         refetch()
       }, 200000)
@@ -40,8 +40,7 @@ const Posts = () => {
   dispatch(forumSlice.actions.changeGlobalIsError(isError))
   return (
     <div style={{marginTop: 55}}>
-      {(!globalIsLoading && !globalIsLoading) && posts && posts.length > 0
-            ? posts.map((post, index) =>
+      {(!globalIsLoading && !globalIsLoading) && posts && posts.length > 0 && posts.map((post, index) =>
               <Card sx={{ display: 'flex', width: '70%', margin: 'auto', marginTop: index > 0 ? 20 : 0 }} key={post._id}>
                 <CardMedia
                   component="img"
@@ -57,7 +56,6 @@ const Posts = () => {
                 </Box>
               </Card>
             )
-            : <Typography variant={'h1'} style={{textAlign: 'center'}}>Ничего нет</Typography>
       }
     </div>
   );
