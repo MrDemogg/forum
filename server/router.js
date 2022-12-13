@@ -11,7 +11,7 @@ router.post('/users/sessions', async (req, res) => {
 })
 
 router.patch('/users', async (req, res) => {
-  await mongoHandler.logout(req.get('Token'), res)
+  await mongoHandler.logout(req.get('Id'), req.get('Token'), res)
 })
 
 router.post('/posts', async (req, res) => {
@@ -19,13 +19,14 @@ router.post('/posts', async (req, res) => {
     req.body.title,
     req.body.description ? req.body.description : null,
     req.body.image ? req.body.image : null,
+    req.get('Id'),
     req.get('Token'),
     res
   )
 })
 
 router.post('/comments', async (req, res) => {
-  await mongoHandler.insertComment(req.body.text, req.body.post, req.get('Token'), res)
+  await mongoHandler.insertComment(req.body.text, req.body.post, req.get('Id'), req.get('Token'), res)
 })
 
 router.get('/posts', async (_, res) => {
