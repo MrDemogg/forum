@@ -4,6 +4,7 @@ import {useNavigate} from "react-router-dom";
 import ProfileEntryModal from "../ProfileEntryModal";
 import {Button} from "@mui/material";
 import {useAppSelector} from "../../hooks/redux";
+import VisualInfo from "./VisualInfo";
 
 const NavBar = () => {
   const router = useNavigate()
@@ -28,6 +29,7 @@ const NavBar = () => {
           <ProfileEntryModal visible={modalVisible} changeVisible={setModalVisible} />
         </Container>
       </Navbar>
+      <VisualInfo />
     </div>
   );
 };
