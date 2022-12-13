@@ -8,9 +8,8 @@ const VisualInfo = () => {
   const [errorClosed, setErrorClosed] = useState(false)
   const {globalIsError, errorInfo, globalIsLoading} = useAppSelector(state => state.forumReducer)
   const dispatch = useAppDispatch()
-  console.log(globalIsLoading, globalIsError)
   return (
-    <div>
+    <div style={{marginTop: 57}}>
       {globalIsLoading
         ? <Box sx={{width: '100%'}}>
           <LinearProgress/>
