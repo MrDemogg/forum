@@ -5,7 +5,8 @@ interface ForumState {
   token: string | null,
   userId: string | null,
   globalIsError: boolean,
-  globalIsLoading: boolean
+  globalIsLoading: boolean,
+  globalRefetch: boolean
 }
 
 const initialState: ForumState = {
@@ -13,7 +14,8 @@ const initialState: ForumState = {
   token: null,
   userId: null,
   globalIsError: false,
-  globalIsLoading: false
+  globalIsLoading: false,
+  globalRefetch: false
 }
 
 export const forumSlice = createSlice({
@@ -34,6 +36,9 @@ export const forumSlice = createSlice({
     },
     changeGlobalIsLoading(state, action: PayloadAction<boolean>) {
       state.globalIsLoading = action.payload
+    },
+    globalRefetch(state, action: PayloadAction<boolean>) {
+      state.globalRefetch = action.payload
     }
   }
 })
