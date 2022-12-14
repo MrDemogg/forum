@@ -6,17 +6,25 @@ import CreatePosts from "./components/CreatePosts";
 import NavBar from "./components/UI/NavBar";
 import {useAppDispatch} from "./hooks/redux";
 import {forumSlice} from "./store/reducers/ForumSlice";
+import {forumAPI} from "./service/ForumService";
 
 const App = () => {
   const dispatch = useAppDispatch()
+  const [userIsExists] = forumAPI.useIsUserExistsMutation()
 
   useEffect(() => {
     const userData = localStorage.getItem('user')
     if (userData) {
       const parsedData = JSON.parse(userData)
-      if ('token' in parsedData && 'id' in parsedData && typeof parsedData.token === 'string' && typeof parsedData.id === "string") {
-        dispatch(forumSlice.actions.setId(parsedData.id))
-        dispatch(forumSlice.actions.setToken(parsedData.token))
+      if ('token' in parsedData && 'id' in parsedData) {
+        userIsExists(parsedData.id).then(res => {
+          if ('error' in res && 'status' in res.error && res.error.status === 404) {
+            localStorage.removeItem('user')
+          } else {
+            dispatch(forumSlice.actions.setId(parsedData.id))
+            dispatch(forumSlice.actions.setToken(parsedData.token))
+          }
+        })
       }
     }
   }, [])
@@ -24,8 +32,8 @@ const App = () => {
     <BrowserRouter>
       <NavBar />
       <Routes>
-        <Route path={'/post'} element={<Posts />} />
-        <Route path={'/post/:id'} element={<Description />} />
+        <Route path={'/posts'} element={<Posts />} />
+        <Route path={'/posts/:id'} element={<Description />} />
         <Route path={'/create'} element={<CreatePosts />} />
         <Route path={'*'} element={<Posts />} />
       </Routes>
