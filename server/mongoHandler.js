@@ -13,6 +13,17 @@ const mongoHandler = {
     }
     return {success: false, status: 403, text: 'Пользователь не авторизован или пользователя не существует'}
   },
+  userIsExists: async (id, res) => {
+    await client.connect()
+    const users = await client.db('Forum').collection('Users')
+    const userIsExists = await users.findOne({_id: new ObjectId(id)})
+    if (userIsExists !== null){
+      res.status(200).send()
+    } else {
+      res.status(404).send()
+    }
+    await client.close()
+  },
   register: async (username, password, res) => {
     try {
       await client.connect()
