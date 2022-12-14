@@ -16,18 +16,6 @@ import {forumSlice} from "../store/reducers/ForumSlice";
 import {IProfileResponse} from "../models/IProfileResponse";
 import {SerializedError} from "@reduxjs/toolkit";
 
-const modalStyle = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4
-};
-
 interface ProfileEntryModalProps {
   changeVisible: (bool: boolean) => void,
   visible: boolean
@@ -95,7 +83,7 @@ const ProfileEntryModal: FC<ProfileEntryModalProps> = ({changeVisible, visible})
       open={visible}
       onClose={changeVisible}
     >
-      <Box sx={modalStyle}>
+      <Box className={'modal-styles'} sx={{bgcolor: 'background.paper', boxShadow: 24}}>
         <Swiper
           pagination={pagination}
           modules={[Pagination]}
