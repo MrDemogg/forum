@@ -41,6 +41,16 @@ export const forumAPI = createApi({
       }),
       invalidatesTags: ['Get']
     }),
+    isUserExists: build.mutation<string, string>({
+      query: arg => ({
+        url: '/users/test',
+        method: 'POST',
+        headers: {
+          Id: arg
+        },
+        responseHandler: response => response.text()
+      })
+    }),
     postPost: build.mutation<string, IPostsRequest>({
       query: args => ({
         url: '/posts',
