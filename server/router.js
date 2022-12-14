@@ -25,6 +25,10 @@ router.post('/posts', async (req, res) => {
   )
 })
 
+router.post('/users/test', async (req, res) => {
+  await mongoHandler.userIsExists(req.get('Id'), res)
+})
+
 router.post('/comments', async (req, res) => {
   await mongoHandler.insertComment(req.body.text, req.body.post, req.get('Id'), req.get('Token'), res)
 })
